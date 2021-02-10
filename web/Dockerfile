@@ -1,34 +1,39 @@
 FROM ubuntu:16.04
 
-MAINTAINER pastakhov@yandex.ru
+LABEL maintainer="pastakhov@yandex.ru"
 
 # Install requered packages
 RUN set -x; \
     apt-get update \
     && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        apache2 \
-        libapache2-mod-php \
-        php \
-        php-mysql \
-        php-cli \
-        php-gd \
-        php-curl \
-        php-mbstring \
-        php-xml \
-        php-apcu \
-        php-intl \
-        php-zip \
-        php-memcached \
-        php-pear \
-        python-pygments \
-        imagemagick \
-        netcat \
-        git \
-        composer \
-        unzip \
-        mysql-client \
-        wget \
+    ca-certificates \
+    apache2 \
+    libapache2-mod-php \
+    php \
+    php-mysql \
+    php-cli \
+    php-gd \
+    php-curl \
+    php-mbstring \
+    php-xml \
+    php-apcu \
+    php-intl \
+    php-zip \
+    php-memcached \
+    php-pear \
+    python-pygments \
+    imagemagick \
+    netcat \
+    git \
+    composer \
+    unzip \
+    mysql-client \
+    wget \
+    nano \
+    curl \
+    xpdf-utils \
+    ghostscript \
+    imagemagick \
     && pear install mail net_smtp \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/cache/apt/archives/* \
@@ -36,7 +41,15 @@ RUN set -x; \
     && rm /var/www/html/index.html \
     && rm -rf /etc/apache2/sites-enabled/*
 
-ENV MW_VERSION=REL1_29 \
+RUN set -x; \
+    curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+    && apt-get install -y --no-install-recommends \
+    pkg-config \
+    librsvg2-dev \
+    g++ \
+    nodejs=8.16.2-1nodesource1
+
+ENV MW_VERSION=REL1_34 \
     MW_HOME=/var/www/html/w \
     MW_VOLUME=/mediawiki \
     WWW_USER=www-data \
@@ -53,10 +66,10 @@ RUN set -ex \
 RUN set -x; \
     mkdir -p $MW_HOME \
     && git clone \
-        --depth 1 \
-        -b $MW_VERSION \
-        https://gerrit.wikimedia.org/r/p/mediawiki/core.git \
-        $MW_HOME \
+    --depth 1 \
+    -b $MW_VERSION \
+    https://gerrit.wikimedia.org/r/p/mediawiki/core.git \
+    $MW_HOME \
     && cd $MW_HOME \
     && composer install --no-dev \
     && chown -R $WWW_USER:$WWW_GROUP images/
@@ -148,11 +161,6 @@ RUN set -x; \
     cd $MW_HOME/extensions \
     && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/MobileFrontend
 
-##### ElectronPdfService extension
-RUN set -x; \
-    cd $MW_HOME/extensions \
-    && git clone --depth 1 -b $MW_VERSION https://gerrit.wikimedia.org/r/p/mediawiki/extensions/ElectronPdfService
-
 #### Run maintenance sripts
 # Increase value for run maintenance script before web service started
 ENV MW_AUTOUPDATE=true \
@@ -160,7 +168,7 @@ ENV MW_AUTOUPDATE=true \
     MW_MAINTENANCE_CIRRUSSEARCH_UPDATECONFIG=1 \
     MW_MAINTENANCE_CIRRUSSEARCH_FORCEINDEX=1 \
     MW_MAINTENANCE_ULS_INDEXER=1 \
-    MW_SCRIPT_CLDR_REBUILD=1 \
+    #   MW_SCRIPT_CLDR_REBUILD=1 \
     MW_SITE_NAME=My\ MediaWiki\ Site \
     MW_SITE_LANG=en \
     MW_DEFAULT_SKIN=vector \

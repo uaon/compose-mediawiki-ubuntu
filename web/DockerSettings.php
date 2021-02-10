@@ -250,6 +250,9 @@ switch( getenv( 'MW_SEARCH_TYPE' ) ) {
         $wgSearchType = null;
 }
 
+######################### File extensions ##########################
+$wgFileExtensions = array_merge( $wgFileExtensions, array( 'doc', 'xls', 'mpp', 'pdf', 'ppt', 'xlsx', 'jpg', 'tiff', 'odt', 'odg', 'ods', 'odp'));
+
 ######################### MultimediaViewer ##########################
 wfLoadExtension('MultimediaViewer');
 
