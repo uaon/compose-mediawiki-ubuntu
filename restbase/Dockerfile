@@ -1,6 +1,6 @@
 FROM node:10
 
-MAINTAINER pastakhov@yandex.ru
+LABEL "Maintainer:pastakhov@yandex.ru"
 
 ENV RB_HOME=/var/lib/restbase \
     RB_DATA=/data \
